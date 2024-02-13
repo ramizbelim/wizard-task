@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="untrustworthy_warning_wizard_forms" model="ir.ui.view">
+            <field name="name">warning.form</field>
+            <field name="model">warning.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <field name="warning" readonly="1"/>
+                        <footer>
+                            <button type="object" name="proceed" data-hotkey="2" string="Proceed" class="btn-primary"/>
+                            <button special="cancel" data-hotkey="z" string="Cancel" class="btn-primary"/>
+                        </footer>
+                    </sheet>
+                </form>
+
+            </field>
+        </record>
+        <record id="untrustworthy_warnings_wizard" model="ir.actions.act_window">
+            <field name="name">warning</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">warning.wizard</field>
+            <field name="view_id" ref="untrustworthy_warning_wizard_forms"/>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</odoo>
