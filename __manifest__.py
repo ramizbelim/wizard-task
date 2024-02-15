@@ -14,8 +14,7 @@
 
         'wizard/untrustworthy_warning_views.xml',
 
-        'views/res_partner_views.xml',
-        'views/sale_order_views.xml'
+        'views/res_partner_views.xml'
     ],
     'installable': True,
     'application': True,

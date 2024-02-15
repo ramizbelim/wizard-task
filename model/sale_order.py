@@ -1,6 +1,5 @@
 from odoo import models
 
-
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
@@ -8,8 +7,10 @@ class SaleOrder(models.Model):
         check_boolean = self.env["res.partner"].search([('name', '=', self.partner_id.name)])
         check_opportunity = self.opportunity_id.name
         check_amount = self.amount_total
-        count = self.env.context
-        context = {'active_id': self.env.context.get('id')}
+        context = {'count': 0,
+                   'opportunity': check_opportunity,
+                   'amount': check_amount,
+                   'active_id':self.id}
         wizard = {
             'name': "warning",
             'type': 'ir.actions.act_window',
@@ -19,21 +20,22 @@ class SaleOrder(models.Model):
             'view_id': self.env.ref('task_context.untrustworthy_warning_wizard_forms').id,
             'target': 'new',
             'context': context}
-        if check_boolean.untrustworthy and count.update({'count':0})>1:
+        if check_boolean.untrustworthy and self.env.context.get('count',0)<1:
             msg = "This customer is untrustworthy. Are you sure you want to proceed?"
-            context.update({'msg':msg})
+            context.update(count=0)
+            context.update({'msg': msg})
             return wizard
-            # wizard_action_id = self.env.ref('task_context.untrustworthy_warning_wizard_forms')
-            # msg = "This customer is untrustworthy. Are you sure you want to proceed?"
-            # raise RedirectWarning(msg, wizard_action_id.id, ('proceed'),
-            #                       {'active_id': self.env.context.get('id'), })
-        elif check_opportunity == False :
+        elif check_opportunity == False and self.env.context.get('count',1)<2:
             msg = "The quotation is not related to any opportunity."
-            wizard['context']['msg'] = msg
+            context.update(count=1)
+            context.update({'msg': msg})
             return wizard
-        elif check_amount == 0:
+        elif check_amount == 0 and self.env.context.get('count',2)<3:
             msg = "The total amount is Zero!"
-            wizard['context']['msg'] = msg
+            context.update(count=2)
+            context.update({'msg': msg})
             return wizard
         else:
             return super(SaleOrder, self).action_confirm()
+
+
